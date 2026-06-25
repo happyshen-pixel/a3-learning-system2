@@ -1,7 +1,9 @@
 
 export default function handler(req,res){
-  const {word} = req.body || {};
+  const body = req.body || {};
+  const word = body.word || "learning";
+
   res.status(200).json({
-    text:`The concept of ${word} is widely used in academic research.`
+    text:`The academic concept of ${word} is widely used in modern education.`
   });
 }
