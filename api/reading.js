@@ -4,10 +4,6 @@ export default function handler(req,res){
   const words = body.words || ["education","science","data"];
 
   res.status(200).json({
-    text:`This passage discusses ${words.join(", ")} in an academic context.`,
-    questions:[
-      "What is the main idea?",
-      "What does it imply?"
-    ]
+    text:`This passage discusses ${words.join(", ")} in an academic context.`
   });
 }

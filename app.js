@@ -1,26 +1,52 @@
 
-async function safeFetch(url,data){
+/* SAFE FETCH (never crash UI) */
+async function safeFetch(url, body){
   try{
     const res = await fetch(url,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify(data)
+      body: JSON.stringify(body || {})
     });
-    return await res.json();
+
+    const data = await res.json();
+    return data || {};
   }catch(e){
-    return {text:"API error"};
+    console.error("API error:",e);
+    return {text:"system error (safe fallback)"};
   }
 }
 
-async function start(){
-  const word="impact";
-  document.getElementById("word").innerText=word;
+/* SAFE STATE (fix conversation_id crash) */
+const SAFE_STATE = {
+  conversation_id: "default-session",
+  messages: []
+};
 
-  const data = await safeFetch("/api/sentence",{word});
-  document.getElementById("sentence").innerText=data.text;
+/* START */
+async function start(){
+  try{
+    const word = "impact";
+    document.getElementById("word").innerText = word;
+
+    const data = await safeFetch("/api/sentence",{word});
+
+    document.getElementById("sentence").innerText =
+      data?.text || "no sentence generated";
+  }catch(e){
+    console.error(e);
+  }
 }
 
+/* TEST */
 async function test(){
-  const data = await safeFetch("/api/reading",{words:["impact","data","method"]});
-  document.getElementById("reading").innerText=data.text;
+  try{
+    const data = await safeFetch("/api/reading",{
+      words:["impact","data","method"]
+    });
+
+    document.getElementById("reading").innerText =
+      data?.text || "no reading generated";
+  }catch(e){
+    console.error(e);
+  }
 }
